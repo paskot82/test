@@ -1,0 +1,77 @@
+#!/bin/bash
+# box.sh <номер_ящика> <время> [current_fill]
+
+# ─────────────── Входные данные ───────────────
+box_num=$1          # номер ящика
+time_input=$2       # время (ЧЧ:ММ)
+current_fill=$3     # текущая загрузка (необязательный параметр)
+
+max_fill=23040      # вместимость ящика (изделий)
+per_stroke=96       # изделий за удар
+cycle_time=10.71    # время одного удара (секунды)
+c120=1234243        # текущее значение счётчика
+
+tsikl="29:42"       # длительность цикла по паспорту (мин:сек)
+
+# ─────────────── Переводы в секунды ───────────────
+tsikl_sec=$((10#${tsikl%%:*} * 60 + 10#${tsikl##*:}))
+end_sec=$((10#${time_input%%:*} * 3600 + 10#${time_input##*:} * 60))
+
+# ─────────────── Функции ───────────────
+to_hms () {
+    local t=$1
+    printf "%02d:%02d:%02d" $(( (t/3600) % 24 )) $(((t%3600)/60)) $((t%60))
+}
+
+# ─────────────── Определение режима ───────────────
+if [ -n "$current_fill" ]; then
+    # время указано внутри цикла, нужно досчитать конец ящика
+    remain=$(( (max_fill - current_fill) / per_stroke ))   # сколько ударов осталось
+    remain_time=$(echo "$remain * $cycle_time" | bc)       # сколько секунд до конца
+    remain_time=${remain_time%.*}
+    end_sec=$(( end_sec + remain_time ))
+    # счётчик до конца ящика
+    c120_end=$(( c120 + remain ))
+else
+    # если current_fill не указан → end_sec это конец ящика
+    c120_end=$(( c120 + (max_fill / per_stroke) ))
+fi
+
+# ─────────────── Определение смены ───────────────
+shift1_start=$((6*3600 + 30*60))    # 06:30
+shift1_end=$((18*3600 + 30*60))     # 18:30
+shift2_start=$shift1_end            # 18:30
+shift2_end=$((24*3600 + 6*3600 + 30*60)) # 06:30 next day
+
+# пересчитаем первый конец
+first_end_sec=$((end_sec - (box_num - 1) * tsikl_sec))
+
+if [ $first_end_sec -ge $shift1_start ] && [ $first_end_sec -le $shift1_end ]; then
+    current_shift_end=$shift1_end
+    next_shift_start=$shift2_start
+    next_shift_label="второй смены"
+else
+    if [ $first_end_sec -lt $shift1_start ]; then
+        first_end_sec=$((24*3600 + first_end_sec))
+        end_sec=$((24*3600 + end_sec))
+    fi
+    current_shift_end=$shift2_end
+    next_shift_start=$shift1_start + 24*3600
+    next_shift_label="первой смены следующего дня"
+fi
+
+# ─────────────── Вывод списка ───────────────
+i=1
+current_end=$first_end_sec
+current_c120=$(( c120_end - (box_num - 1) * (max_fill / per_stroke) ))
+
+while [ $current_end -le $current_shift_end ]; do
+    echo "Ящик $(printf "%2d" $i): $(to_hms $current_end) | C120=$current_c120"
+    i=$((i + 1))
+    current_end=$((current_end + tsikl_sec))
+    current_c120=$((current_c120 + (max_fill / per_stroke)))
+done
+
+# ─────────────── Первый ящик следующей смены ───────────────
+first_box_next_end=$((next_shift_start + tsikl_sec))
+echo "Первый ящик $next_shift_label закончился в: $(to_hms $first_box_next_end) | C120=$current_c120"
