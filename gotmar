@@ -65,7 +65,7 @@ c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
 c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
 c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}') 
 
-cycle_time="${c_A}:${c_V}"
+cycle_time="${c_A}:${c_V:0:2}"
 
 fi
 
