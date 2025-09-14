@@ -61,12 +61,11 @@ else
 drops=$(echo "scale=3; ${max_fill}/${per_stroke}" | bc)
 box_1_cek=$(echo "scale=3; ${drops}*${cycle_box_shot}" | bc)
 chiclo=$(echo "scale=2; ${box_1_cek}/60" | bc)
+chiclo=$(printf "%.2f\n" $chiclo)
 c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
 c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
-c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}') 
-
-cycle_time="${c_A}:${c_V:0:2}"
-
+c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}')
+cycle_time="${c_A}:${c_V}"
 fi
 
 
