@@ -37,20 +37,41 @@ read max_fill
 echo "сколько изделий за удар?"
 read per_stroke
 
-echo "время одного удара (секунды)"
-read cycle_time
+echo "время цикла удара"
+echo " или время 1 ящика"
+read cycle_box_shot
+
+
+#echo "время одного удара (секунды)"
+#read cycle_time
+#echo "время за какое набирается ящик (29:42)"
+#read tsikl       # длительность цикла по паспорту (мин:сек)
+
+
+
+test=$(echo $cycle_box_shot | grep ':')
+if [ $test ];then
+tsikl="$cycle_box_shot"
+cycle_box_A="$(echo "$cycle_box_shot" | sed 's/,/\./g' |awk -F":" '{print $1}')
+cycle_box_A=$(($cycle_box_A*
+cycle_box_B="$(echo "$cycle_box_shot" | sed 's/,/\./g' |awk -F":" '{print $2}')
+tsikl="${cycle_box_A}:${cycle_box_A}"
+
+else
+drops=$(echo "scale=3; {$max_fill}/${per_stroke} | bc)
+box_1_cek=$(echo "scale=3; ${drops}*${cycle_box_shot} | bc)
+chiclo=$(echo "scale=3; ${box_1_cek}/60 | bc)
+c_A=$(echo "chiclo" | awk "-F" '{print $1}')
+c_V=$(echo "chiclo" | awk "-F" '{print $2}')
+c_V=$(echo "scale=3; $c_V*0.6 | bc)
+
+cycle_time="${c_A}:${c_B}"
+
+fi
+
 
 echo "c120 ?"
 read c120
-
-echo "время за какое набирается ящик (29:42)"
-read tsikl       # длительность цикла по паспорту (мин:сек)
-
-
-
-test=$(echo $cycle_time | sed 's/\./:/' | awk -F":" '{print $1}')
-
-
 
 
 # ─────────────── Переводы в секунды ───────────────
