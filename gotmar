@@ -21,21 +21,36 @@ echo "box num?"
 read box_num
 fi
 
-if [ -z "$time_input" ];then
-echo "time now?"
-read time_input
-fi
+
+
+
+
+#if [ -z "$time_input" ];then
+#echo "time now?"
+#read time_input
+#fi
+
+echo "c120 ?"
+read c120
 
 if [ -z "$current_fill" ];then
 echo "текущая брояжка (сколько уже в ящике?)"
 read current_fill
+time_input=$(date +%H:%M)
 fi
 
 echo "вместимость ящика"
 read max_fill
 
+
+
 echo "сколько изделий за удар?"
 read per_stroke
+
+
+ydarov=$(echo "scale=3; ${max_fill}/${per_stroke}" | bc)
+
+
 
 echo "время цикла удара"
 echo " или время 1 ящика"
@@ -49,24 +64,7 @@ read cycle_box_shot
 
 
 
-test=$(echo $cycle_box_shot | grep ':')
-if [ $test ];then
-tsikl="$cycle_box_shot"
-cycle_box_A="$(echo "$cycle_box_shot" | sed 's/,/\./g' |awk -F":" '{print $1}')
-cycle_box_A=$(($cycle_box_A*
-cycle_box_B="$(echo "$cycle_box_shot" | sed 's/,/\./g' |awk -F":" '{print $2}')
-tsikl="${cycle_box_A}:${cycle_box_A}"
 
-else
-drops=$(echo "scale=3; ${max_fill}/${per_stroke}" | bc)
-box_1_cek=$(echo "scale=3; ${drops}*${cycle_box_shot}" | bc)
-chiclo=$(echo "scale=2; ${box_1_cek}/60" | bc)
-chiclo=$(printf "%.2f\n" $chiclo)
-c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
-c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
-c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}')
-cycle_time="${c_A}:${c_V}"
-fi
 
 
 echo "c120 ?"
@@ -74,6 +72,54 @@ read c120
 
 
 echo $cycle_time
+
+
+
+
+find_time_cycle() {
+c_A=$(echo "$cycle_time" | awk -F":" '{print $1}')
+c_V=$(echo "$cycle_time" | awk -F":" '{print $2}')
+ cycle_time_cek=$(echo "scale=3; $c_A * 60 + $c_V" | bc)
+cycle_time=$(echo "scale=3; $cycle_time_cek / $ydarov" | bc)
+#echo "$cycle_time"
+}
+
+
+
+find_time_box() {
+
+
+box_1_cek=$(echo "scale=3; ${ydarov}*${cycle_box_shot}" | bc)
+chiclo=$(echo "scale=2; ${box_1_cek}/60" | bc)
+chiclo=$(printf "%.2f\n" $chiclo)
+c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
+c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
+c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}')
+tsikl="${c_A}:${c_V}"
+echo;
+echo
+#echo $cycle_time
+}
+
+
+
+
+if [ $(echo ${cycle_box_shot} | grep ':') ];then
+cycle_time="$cycle_box_shot"
+find_time_cycle
+else
+#cycle_box_shot="$cycle_box_shot"
+find_time_box
+fi
+
+
+
+
+
+
+
+
+
 
 
 # ─────────────── Переводы в секунды ───────────────
