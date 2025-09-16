@@ -11,7 +11,7 @@ current_fill=$3     # текущая загрузка (необязательн�
 # cycle_time=10.71    # время одного удара (секунды)
 # c120=1234243        # текущее значение счётчика
 
-tsikl="29:42"       # длительность цикла по паспорту (мин:сек)
+#tsikl="29:42"       # длительность цикла по паспорту (мин:сек)
 
 
 
@@ -65,10 +65,6 @@ read cycle_box_shot
 
 
 
-
-
-echo "c120 ?"
-read c120
 
 
 echo $cycle_time
@@ -175,7 +171,9 @@ current_end=$first_end_sec
 current_c120=$(( c120_end - (box_num - 1) * (max_fill / per_stroke) ))
 
 while [ $current_end -le $current_shift_end ]; do
-    echo "Ящик $(printf "%2d" $i): $(to_hms $current_end) | C120=$current_c120"
+#if [ $current_end
+#${RED}
+    echo "Ящик $(printf "%2d" $i): $(to_hms $current_end) | C120=$current_c120${NC}"
     i=$((i + 1))
     current_end=$((current_end + tsikl_sec))
     current_c120=$((current_c120 + (max_fill / per_stroke)))
@@ -184,3 +182,12 @@ done
 # ─────────────── Первый ящик следующей смены ───────────────
 first_box_next_end=$((next_shift_start + tsikl_sec))
 echo "Первый ящик $next_shift_label закончился в: $(to_hms $first_box_next_end) | C120=$current_c120"
+
+echo "max_fill=$max_fill вместимость ящика (изделий)
+ per_stroke=$per_stroke       # изделий за удар
+ cycle_time=$cycle_time    # время одного удара (секунды)
+ c120=$c120        # текущее значение счётчика
+
+tsikl=$tsikl"
+echo "first_end_sec=$first_end_sec"
+echo "current_c120=$current_c120
