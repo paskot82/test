@@ -104,7 +104,7 @@ if [ $(echo ${cycle_box_shot} | grep ':') ];then
 cycle_time="$cycle_box_shot"
 find_time_cycle
 else
-#cycle_box_shot="$cycle_box_shot"
+cycle_time="$cycle_box_shot"
 find_time_box
 fi
 
@@ -190,4 +190,4 @@ echo "max_fill=$max_fill вместимость ящика (изделий)
 
 tsikl=$tsikl"
 echo "first_end_sec=$first_end_sec"
-echo "current_c120=$current_c120
+echo "current_c120=$current_c120"
