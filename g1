@@ -31,13 +31,6 @@ read box_num
 fi
 
 
-box_num="6"
-c120="1210850"
-max_fill="12816"
-per_stroke="48"
-current_fill="6048"
-cycle_box_shot=13.52
-
 #if [ -z "$time_input" ];then
 #echo "time now?"
 #read time_input
@@ -107,9 +100,9 @@ find_time_box() {
 
 box_1_cek=$(echo "scale=3; ${ydarov}*${cycle_box_shot}" | bc)
 echo "box_1_cek: $box_1_cek"
-chiclo=$(echo "scale=2; ${box_1_cek}/60" | bc | sed 's/\./,/g')
+chiclo=$(echo "scale=2; ${box_1_cek}/60" | bc)
 echo "chiclo1:$chiclo"
-chiclo=$(printf "%.2f\n" $chiclo| sed 's/,/\./g')
+chiclo=$(printf "%.2f\n" $chiclo)
 echo "chiclo2:$chiclo"
 c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
 c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
@@ -133,10 +126,10 @@ find_time_box
 fi
 
 echo "cycle_box_shot=$cycle_box_shot"
-echo "max_fill=$max_fill вместимость ящика (изделий)"
-echo " per_stroke=$per_stroke       # изделий за удар"
-echo " cycle_time=$cycle_time    # время одного удара (секунды)"
-echo " c120=$c120        # текущее значение счётчика"
+echo "max_fill=$max_fill "
+echo " per_stroke=$per_stroke "
+echo " cycle_time=$cycle_time"
+echo " c120=$c120   "
 
 echo "tsikl=$tsikl"
 echo "first_end_sec=$first_end_sec"
@@ -216,10 +209,13 @@ done
 first_box_next_end=$((next_shift_start + tsikl_sec))
 echo "Первый ящик $next_shift_label закончился в: $(to_hms $first_box_next_end) | C120=$current_c120"
 
-echo "max_fill=$max_fill вместимость ящика (изделий)"
-echo " per_stroke=$per_stroke       # изделий за удар"
-echo " cycle_time=$cycle_time    # время одного удара (секунды)"
-echo " c120=$c120        # текущее значение счётчика"
+
+
+
+echo "max_fill=$max_fill"
+echo " per_stroke=$per_stroke"
+echo " cycle_time=$cycle_time "
+echo " c120=$c120"
 
 echo "tsikl=$tsikl"
 echo "first_end_sec=$first_end_sec"
