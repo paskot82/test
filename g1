@@ -126,7 +126,7 @@ fi
 
 info() {
 echo
-echo "       ydarov: $ydarov
+echo "       ydarov: $ydarov"
 echo "   time_input: $time_input"
 echo "     max_fill: $max_fill"
 echo "   per_stroke: $per_stroke"
