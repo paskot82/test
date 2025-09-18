@@ -77,12 +77,10 @@ max_fill="12816"
 per_stroke="48"
 current_fill="6048"
 cycle_box_shot=13.52
-
 }
 
+
 ydarov=$(echo "scale=3; ${max_fill}/${per_stroke}" | bc)
-
-
 
 
 find_time_cycle() {
@@ -114,7 +112,7 @@ echo
 }
 
 
-#29:00
+
 
 if [ $(echo ${cycle_box_shot} | grep ':') ];then
 
@@ -125,21 +123,22 @@ cycle_time="$cycle_box_shot"
 find_time_box
 fi
 
-echo "cycle_box_shot=$cycle_box_shot"
-echo "max_fill=$max_fill "
-echo " per_stroke=$per_stroke "
-echo " cycle_time=$cycle_time"
-echo " c120=$c120   "
 
-echo "tsikl=$tsikl"
-echo "first_end_sec=$first_end_sec"
-#echo "current_c120=$current_c120"
-echo $c_V
-#exit 0
+info() {
+echo
+echo "       ydarov: $ydarov
+echo "   time_input: $time_input"
+echo "     max_fill: $max_fill"
+echo "   per_stroke: $per_stroke"
+echo "   cycle_time: $cycle_time "
+echo "         c120: $c120"
+echo "        tsikl: $tsikl"
+echo "first_end_sec: $first_end_sec"
+echo " current_c120: $current_c120"
+echo
+}
 
-
-
-
+info
 
 
 
@@ -176,7 +175,7 @@ shift2_end=$((24*3600 + 6*3600 + 30*60)) # 06:30 next day
 
 # пересчитаем первый конец
 first_end_sec=$((end_sec - (box_num - 1) * tsikl_sec))
-
+#echo "first_end_sec: $first_end_sec"
 if [ $first_end_sec -ge $shift1_start ] && [ $first_end_sec -le $shift1_end ]; then
     current_shift_end=$shift1_end
     next_shift_start=$shift2_start
@@ -199,25 +198,15 @@ current_c120=$(( c120_end - (box_num - 1) * (max_fill / per_stroke) ))
 while [ $current_end -le $current_shift_end ]; do
 #if [ $current_end
 #echo ${RED}
-    echo "Ящик $(printf "%2d" $i): $(to_hms $current_end) | C120=$current_c120${NC}"
+    echo "Box $(printf "%2d" $i): $(to_hms $current_end) | C120: $current_c120${NC}"
     i=$((i + 1))
     current_end=$((current_end + tsikl_sec))
     current_c120=$((current_c120 + (max_fill / per_stroke)))
 done
-
+echo
 # ─────────────── Первый ящик следующей смены ───────────────
 first_box_next_end=$((next_shift_start + tsikl_sec))
 echo "Первый ящик $next_shift_label закончился в: $(to_hms $first_box_next_end) | C120=$current_c120"
 
 
-
-
-echo "max_fill=$max_fill"
-echo " per_stroke=$per_stroke"
-echo " cycle_time=$cycle_time "
-echo " c120=$c120"
-
-echo "tsikl=$tsikl"
-echo "first_end_sec=$first_end_sec"
-echo "current_c120=$current_c120"
-echo "time input: $time_input"
+info
