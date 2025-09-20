@@ -84,8 +84,8 @@ ydarov=$(echo "scale=3; ${max_fill}/${per_stroke}" | bc)
 
 
 find_time_cycle() {
-c_A=$(echo "$cycle_time" | awk -F":" '{print $1}')
-c_V=$(echo "$cycle_time" | awk -F":" '{print $2}')
+c_A=$(echo "$cycle_box_shot" | awk -F":" '{print $1}')
+c_V=$(echo "$cycle_box_shot" | awk -F":" '{print $2}')
  cycle_time_cek=$(echo "scale=3; $c_A * 60 + $c_V" | bc)
 cycle_time=$(echo "scale=3; $cycle_time_cek / $ydarov" | bc)
 #echo "$cycle_time"
