@@ -186,7 +186,7 @@ else
         end_sec=$((24*3600 + end_sec))
     fi
     current_shift_end=$shift2_end
-    next_shift_start=$shift1_start + 24*3600
+    next_shift_start=$(($shift1_start + 24*3600))
     next_shift_label="первой смены следующего дня"
 fi
 
