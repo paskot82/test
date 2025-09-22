@@ -62,7 +62,7 @@ read current_fill
 fi
 
 
-if [[ -z "$current_fill" &&  -z $time_input]];then
+if [[ -z "$current_fill" &&  -z $time_input ]];then
 echo "когда закончился ящик $box_num?"
 read time_input
 time_input="${time_input}:00"
