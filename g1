@@ -135,10 +135,12 @@ echo "         c120: $c120"
 echo "        tsikl: $tsikl"
 echo "first_end_sec: $first_end_sec"
 echo " current_c120: $current_c120"
-echo
+echo "_______"
+echo "    tsikl_sec: $tsikl_sec"
+echo "      end_sec: $end_sec"
 }
 
-info
+
 
 
 
@@ -194,6 +196,9 @@ fi
 i=1
 current_end=$first_end_sec
 current_c120=$(( c120_end - (box_num - 1) * (max_fill / per_stroke) ))
+
+
+info
 
 while [ $current_end -le $current_shift_end ]; do
 #if [ $current_end
