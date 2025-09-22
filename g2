@@ -1,0 +1,288 @@
+#!/bin/bash
+# box.sh <номер_ящика> <время> [current_fill]
+
+# ─────────────── Входные данные ───────────────
+box_num=$1          # номер ящика
+time_input=$2       # время (ЧЧ:ММ)
+current_fill=$3     # текущая загрузка (необязательный параметр)
+
+
+for_test() {
+box_num="3"
+c120="1210850"
+max_fill="23040"
+per_stroke="96"
+current_fill="9600"
+cycle_box_shot=7.90
+}
+
+#for_test
+
+
+
+
+if [ "$1" ];then
+time_input="${time_input}:00"
+fi
+
+
+
+# color
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+NC=$(tput sgr0) #  Stop color
+
+
+
+
+
+
+if [ -z "$box_num" ];then
+echo "box num?"
+read box_num
+fi
+
+
+
+
+if [ -z "$c120" ];then
+echo "c120 ?"
+read c120
+fi
+
+
+if [ -z "$current_fill" ];then
+echo "текущая брояжка (сколько уже в ящике?)"
+read current_fill
+#	if [ -z $time_input ];then
+		time_input=$(date +%H:%M:%S)
+#	fi
+fi
+
+
+if [[ -z "$current_fill" ]];then
+echo "когда закончился ящик $box_num?"
+read time_input
+time_input="${time_input}:00"
+fi
+
+
+
+if [ -z "$max_fill" ];then
+echo "вместимость ящика"
+read max_fill
+fi
+
+
+if [ -z "$per_stroke" ];then
+echo "сколько изделий за удар?"
+read per_stroke
+fi
+
+
+
+
+if [ -z $cycle_box_shot ];then
+echo "время цикла удара"
+echo " или время 1 ящика"
+read cycle_box_shot
+fi
+
+#echo "время одного удара (секунды)"
+#read cycle_time
+#echo "время за какое набирается ящик (29:42)"
+#read tsikl       # длительность цикла по паспорту (мин:сек)
+
+
+
+
+
+
+ydarov=$(echo "scale=2; ${max_fill}/${per_stroke}" | bc)
+
+decatue=$(echo $ydarov | awk -F"." '{print $2}')
+
+if [ $decatue -gt 0 ];then
+echo "______________"
+echo "${RED} WORNING!"
+echo "вы ввели неправильное общее число Приформ в ящике"
+echo "или"
+echo "неправильное число Приформ за один удар"
+echo " ${max_fill}/${per_stroke}=$ydarov${NC}"
+echo
+echo "попробовать прощитать как есть?"
+echo "Y) - Yes"
+echo "*) - EXIT"
+read couse
+if [ ! "$couse" == "y" ];then exit; fi
+
+
+fi
+
+
+find_time_cycle() {
+c_A=$(echo "$cycle_box_shot" | awk -F":" '{print $1}')
+c_V=$(echo "$cycle_box_shot" | awk -F":" '{print $2}')
+ cycle_time_cek=$(echo "scale=3; $c_A * 60 + $c_V" | bc)
+cycle_time=$(echo "scale=3; $cycle_time_cek / $ydarov" | bc)
+#echo "$cycle_time"
+}
+
+
+
+find_time_box() {
+
+
+box_1_cek=$(echo "scale=3; ${ydarov}*${cycle_box_shot}" | bc)
+echo "box_1_cek: $box_1_cek"
+chiclo=$(echo "scale=2; ${box_1_cek}/60" | bc)   # разкоментируй для линукса
+#chiclo=$(echo "scale=2; ${box_1_cek}/60" | bc | sed "s/\./,/g") # закоментируй для линукса
+echo "chiclo1:$chiclo"
+chiclo=$(printf "%.2f\n" $chiclo)
+#chiclo=$(echo $chiclo | sed "s/,/\./g") # закоментируй для линукса
+echo "chiclo2:$chiclo"
+c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
+c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
+c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}')
+tsikl="${c_A}:${c_V}"
+echo;
+echo
+#echo $cycle_time
+}
+
+
+
+
+if [ $(echo ${cycle_box_shot} | grep ':') ];then
+
+tsikl="$cycle_box_shot"
+find_time_cycle
+else
+cycle_time="$cycle_box_shot"
+find_time_box
+fi
+
+
+info() {
+
+echo
+echo "        СМЕНА: $cmena"
+echo "        __________"
+echo "       ydarov: +$ydarov"
+echo "     max_fill: $max_fill"
+echo " current_fill: $current_fill"
+echo "   per_stroke: $per_stroke"
+echo "   cycle_time: $cycle_time "
+echo "        tsikl: $tsikl"
+echo
+echo "_______"
+echo "   time_input: $time_input"
+echo "         c120: $c120"
+echo " current_c120: $current_c120"
+echo "first_end_sec: $first_end_sec ($(to_hms $first_end_sec))"
+echo "      end_sec: $end_sec ($(to_hms $end_sec))"
+echo "    tsikl_sec: $tsikl_sec"
+echo "      end_sec: $end_sec"
+echo "  current_end: $current_end"
+}
+
+
+
+
+
+
+# ─────────────── Переводы в секунды ───────────────
+tsikl_sec=$((10#${tsikl%%:*} * 60 + 10#${tsikl##*:}))
+end_sec=$((10#${time_input%%:*} * 3600 + 10#${time_input##*:} * 60))
+
+
+
+
+hhh="$(echo $time_input | awk -F":" '{print $1}')"
+mmm="$(echo $time_input | awk -F":" '{print $2}')"
+sss="$(echo $time_input | awk -F":" '{print $3}')"
+
+end_sec=$(($hhh * 3600 + $mmm * 60 + $sss))
+
+
+
+# ─────────────── Функции ───────────────
+to_hms () {
+    local t=$1
+    printf "%02d:%02d:%02d" $(( (t/3600) % 24 )) $(((t%3600)/60)) $((t%60))
+}
+
+# ─────────────── Определение режима ───────────────
+if [ -n "$current_fill" ]; then
+    # время указано внутри цикла, нужно досчитать конец ящика
+    remain=$(( (max_fill - current_fill) / per_stroke ))   # сколько ударов осталось
+    remain_time=$(echo "$remain * $cycle_time" | bc)       # сколько секунд до конца
+    remain_time=${remain_time%.*}
+    end_sec=$(( end_sec + remain_time ))
+    # счётчик до конца ящика
+    c120_end=$(( c120 + remain ))
+else
+    # если current_fill не указан → end_sec это конец ящика
+    c120_end=$(( c120 + (max_fill / per_stroke) ))
+fi
+
+# ─────────────── Определение смены ───────────────
+shift1_start=$((6*3600 + 30*60))    # 06:30
+shift1_end=$((18*3600 + 30*60))     # 18:30
+shift2_start=$shift1_end            # 18:30
+shift2_end=$((24*3600 + 6*3600 + 30*60)) # 06:30 next day
+
+# пересчитаем первый конец
+first_end_sec=$((end_sec - (box_num - 1) * tsikl_sec))
+#echo "first_end_sec: $first_end_sec"
+if [ $end_sec -ge $shift1_start ] && [ $end_sec -le $shift1_end ]; then
+    current_shift_end=$shift1_end
+    next_shift_start=$shift2_start
+    next_shift_label="второй смены"
+	cmena=1
+else
+    if [ $end_sec -lt $shift1_start ]; then
+        first_end_sec=$((24*3600 + first_end_sec))
+        end_sec=$((24*3600 + end_sec))
+		
+
+    fi
+    current_shift_end=$shift2_end
+    next_shift_start=$(($shift1_start + 24*3600))
+    next_shift_label="первой смены следующего дня"
+	cmena=2
+fi
+
+# ─────────────── Вывод списка ───────────────
+i=1
+current_end=$first_end_sec
+current_c120=$(( c120_end - (box_num - 1) * (max_fill / per_stroke) ))
+
+
+info
+echo "__________________________________________"
+while [ $current_end -le $current_shift_end ]; do
+
+time_now=$(date +%H:%M)
+if [ $current_end -gt "$((10#${time_now%%:*} * 3600 + 10#${time_now##*:} * 60))" ];then
+
+echo -n ${GREEN}
+fi
+
+    echo "Box $(printf "%2d" $i) - $(to_hms $current_end) | C120: $current_c120${NC}"
+    i=$((i + 1))
+    current_end=$((current_end + tsikl_sec))
+if [ $current_c120 ];then	
+    current_c120=$((current_c120 + (max_fill / per_stroke)))
+	fi
+done
+
+# ─────────────── Первый ящик следующей смены ───────────────
+first_box_next_end=$((current_end))
+echo "__________________________________________"
+echo "${RED}Box  1 - $(to_hms $first_box_next_end) | C120: $current_c120${NC}"
+
+
+info
