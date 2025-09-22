@@ -56,13 +56,13 @@ fi
 if [ -z "$current_fill" ];then
 echo "текущая брояжка (сколько уже в ящике?)"
 read current_fill
-#	if [ -z $time_input ];then
+	if [ "$current_fill" ];then
 		time_input=$(date +%H:%M:%S)
-#	fi
+	fi
 fi
 
 
-if [[ -z "$current_fill" ]];then
+if [[ -z "$current_fill" &&  -z $time_input]];then
 echo "когда закончился ящик $box_num?"
 read time_input
 time_input="${time_input}:00"
