@@ -27,6 +27,33 @@ fi
 
 
 
+
+
+
+
+ask() {
+
+echo
+
+echo "        __________"
+echo "          box N: $box_num"
+#echo "        ydarov: +$ydarov"
+echo "           C120: $c120"
+
+echo "текущая брояжка: $current_fill"
+echo "вместимость box: $max_fill"
+echo "изделий за удар: $per_stroke"
+echo "    время цикла: $cycle_time "
+echo "    test_cikkkl: $test_cikkkl"
+echo "    время ящика: $tsikl"
+}
+
+
+
+
+
+
+
 # color
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
@@ -37,7 +64,8 @@ NC=$(tput sgr0) #  Stop color
 
 
 
-
+clear
+ask
 
 if [ -z "$box_num" ];then
 echo "box num?"
@@ -46,7 +74,8 @@ fi
 
 
 
-
+clear
+ask
 if [ -z "$c120" ];then
 echo "c120 ?"
 read c120
@@ -54,6 +83,8 @@ fi
 
 
 if [ -z "$current_fill" ];then
+clear
+ask
 echo "текущая брояжка (сколько уже в ящике?)"
 read current_fill
 	if [ "$current_fill" ];then
@@ -62,7 +93,11 @@ read current_fill
 fi
 
 
+
+
 if [[ -z "$current_fill" && -z $time_input ]];then
+clear
+ask
 echo "когда закончился ящик $box_num?"
 read time_input
 time_input="${time_input}:00"
@@ -71,12 +106,16 @@ fi
 
 
 if [ -z "$max_fill" ];then
-echo "вместимость ящика"
+clear
+ask
+echo "вместимость ящика?"
 read max_fill
 fi
 
 
 if [ -z "$per_stroke" ];then
+clear
+ask
 echo "сколько изделий за удар?"
 read per_stroke
 fi
@@ -85,6 +124,8 @@ fi
 
 
 if [ -z $cycle_box_shot ];then
+clear
+ask
 echo "время цикла удара"
 echo " или время 1 ящика"
 read cycle_box_shot
@@ -97,7 +138,11 @@ fi
 
 
 
-
+# ─────────────── Функции ───────────────
+to_hms () {
+    local t=$1
+    printf "%02d:%02d:%02d" $(( (t/3600) % 24 )) $(((t%3600)/60)) $((t%60))
+}
 
 
 ydarov=$(echo "scale=2; ${max_fill}/${per_stroke}" | bc)
@@ -147,6 +192,7 @@ c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
 c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
 c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}')
 tsikl="${c_A}:${c_V}"
+test_cikkkl=$(to_hms $chiclo)
 echo;
 echo
 #echo $cycle_time
@@ -171,21 +217,22 @@ echo
 echo "        СМЕНА: $cmena"
 echo "        __________"
 echo "       ydarov: +$ydarov"
-echo "     max_fill: $max_fill"
-echo " current_fill: $current_fill"
-echo "   per_stroke: $per_stroke"
-echo "   cycle_time: $cycle_time "
-echo "        tsikl: $tsikl"
+echo "     max_fill:  $max_fill"
+echo " current_fill:  $current_fill"
+echo "   per_stroke:  $per_stroke"
+echo "   cycle_time:  $cycle_time "
+echo "  test_cikkkl:  $test_cikkkl"
+echo "        tsikl:  $tsikl"
 echo
 echo "_______"
-echo "   time_input: $time_input"
-echo "         c120: $c120"
-echo " current_c120: $current_c120"
-echo "first_end_sec: $first_end_sec ($(to_hms $first_end_sec))"
-echo "      end_sec: $end_sec ($(to_hms $end_sec))"
-echo "    tsikl_sec: $tsikl_sec"
-echo "      end_sec: $end_sec"
-echo "  current_end: $current_end"
+echo "   time_input:  $time_input"
+echo "         c120:  $c120"
+echo " current_c120:  $current_c120"
+echo "first_end_sec:  $first_end_sec ($(to_hms $first_end_sec))"
+echo "      end_sec:  $end_sec ($(to_hms $end_sec))"
+echo "    tsikl_sec:  $tsikl_sec"
+echo "      end_sec:  $end_sec"
+echo "  current_end:  $current_end"
 }
 
 
@@ -208,11 +255,7 @@ end_sec=$(($hhh * 3600 + $mmm * 60 + $sss))
 
 
 
-# ─────────────── Функции ───────────────
-to_hms () {
-    local t=$1
-    printf "%02d:%02d:%02d" $(( (t/3600) % 24 )) $(((t%3600)/60)) $((t%60))
-}
+
 
 # ─────────────── Определение режима ───────────────
 if [ -n "$current_fill" ]; then
@@ -285,4 +328,4 @@ echo "__________________________________________"
 echo "${RED}Box  1 - $(to_hms $first_box_next_end) | C120: $current_c120${NC}"
 
 
-info
+#info
