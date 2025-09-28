@@ -44,7 +44,7 @@ echo "текущая брояжка: $current_fill"
 echo "вместимость box: $max_fill"
 echo "изделий за удар: $per_stroke"
 echo "    время цикла: $cycle_time "
-echo "    test_cikkkl: $test_cikkkl"
+#echo "    test_cikkkl: $test_cikkkl"
 echo "    время ящика: $tsikl"
 echo "_________________"
 }
@@ -80,6 +80,9 @@ ask
 if [ -z "$c120" ];then
 echo "c120 ?"
 read c120
+if [[ "${#c120}" -ge "9" && -n $(echo $c120 | grep ^21) ]];then
+mashina_14="true"
+fi
 fi
 
 
@@ -193,7 +196,7 @@ c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
 c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
 c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}')
 tsikl="${c_A}:${c_V}"
-test_cikkkl=$(to_hms $chiclo)
+#test_cikkkl=$(to_hms $chiclo)
 echo;
 echo
 #echo $cycle_time
