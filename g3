@@ -32,14 +32,11 @@ fi
 
 
 ask() {
-
 echo
-
 echo "        __________"
 echo "          box N: $box_num"
 #echo "        ydarov: +$ydarov"
 echo "           C120: $c120"
-
 echo "текущая брояжка: $current_fill"
 echo "вместимость box: $max_fill"
 echo "изделий за удар: $per_stroke"
@@ -65,19 +62,21 @@ NC=$(tput sgr0) #  Stop color
 echo ${GREEN}
 
 
-clear
-ask
+
 
 if [ -z "$box_num" ];then
+clear
+ask
 echo "box num?"
 read box_num
 fi
 
 
 
+
+if [ -z "$c120" ];then
 clear
 ask
-if [ -z "$c120" ];then
 echo "c120 ?"
 read c120
 if [[ "${#c120}" -ge "9" && -n $(echo $c120 | grep ^21) ]];then
@@ -165,7 +164,7 @@ echo "попробовать прощитать как есть?"
 echo "Y) - Yes"
 echo "*) - EXIT"
 read couse
-if [ ! "$couse" == "y" ];then exit; fi
+if [ ! "$couse" == "y" ];then echo; fi
 
 
 fi
@@ -182,7 +181,6 @@ cycle_time=$(echo "scale=3; $cycle_time_cek / $ydarov" | bc)
 
 
 find_time_box() {
-
 
 box_1_cek=$(echo "scale=3; ${ydarov}*${cycle_box_shot}" | bc)
 echo "box_1_cek: $box_1_cek"
@@ -227,7 +225,6 @@ echo "   per_stroke:  $per_stroke"
 echo "   cycle_time:  $cycle_time "
 echo "  test_cikkkl:  $test_cikkkl"
 echo "        tsikl:  $tsikl"
-echo
 echo "_______"
 echo "   time_input:  $time_input"
 echo "         c120:  $c120"
