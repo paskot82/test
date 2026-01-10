@@ -252,8 +252,8 @@ hhh="$(echo $time_input | awk -F":" '{print $1}')"
 mmm="$(echo $time_input | awk -F":" '{print $2}')"
 sss="$(echo $time_input | awk -F":" '{print $3}')"
 
-end_sec=$(($hhh * 3600 + $mmm * 60 + $sss))
-
+#end_sec=$(($hhh * 3600 + $mmm * 60 + $sss))
+end_sec=$(echo "scale=3; $hhh * 3600 + $mmm * 60 + $sss" | bc)
 
 
 
