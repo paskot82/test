@@ -217,16 +217,15 @@ fi
 
 info() {
 
-echo
-echo "        СМЕНА: $cmena"
+echo ${GREEN}
+echo "         СМЕНА: $cmena"
 echo "        __________"
-echo "       ydarov: +$ydarov"
-echo "     max_fill:  $max_fill"
-echo " current_fill:  $current_fill"
-echo "   per_stroke:  $per_stroke"
-echo "   cycle_time:  $cycle_time "
-echo "  test_cikkkl:  $test_cikkkl"
-echo "        tsikl:  $tsikl"
+echo "в ящике УДАРОВ: +$ydarov"
+echo " Всего Приформ:  $max_fill"
+echo "   уже в ящике:  $current_fill"
+echo " в одном ударе:  $per_stroke"
+echo " время 1 удара:  $cycle_time"
+echo " время 1 ящика:  $tsikl"
 echo "_______"
 echo "   time_input:  $time_input"
 echo "         c120:  $c120"
@@ -236,6 +235,7 @@ echo "      end_sec:  $end_sec ($(to_hms $end_sec))"
 echo "    tsikl_sec:  $tsikl_sec"
 echo "      end_sec:  $end_sec"
 echo "  current_end:  $current_end"
+echo $NC
 }
 
 
