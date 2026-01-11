@@ -271,7 +271,7 @@ sss="$(echo $time_input | awk -F":" '{print $3}')"
 
 time_now_sec=$(echo "scale=3; $hhh * 3600 + $mmm * 60 + $sss" | bc)
 end_sec=$(echo "scale=3; $hhh * 3600 + $mmm * 60 + $sss + $add_ydarov * $cycle_time" | bc)
-end_sec="$(echo $end_sec | awk -F".|," '{print $1}')
+end_sec="$(echo $end_sec | awk -F".|," '{print $1}')"
 
 
 # ─────────────── Определение режима ───────────────
