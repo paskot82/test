@@ -207,7 +207,7 @@ c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
 c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
 c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}')
 
-if [[ "${#c_V}"  -le 1 ]];then
+if [[ "${#c_V}" -le 1 ]];then
 c_V="0${c_V}"
 fi
 tsikl="${c_A}:${c_V}"
