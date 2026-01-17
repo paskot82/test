@@ -11,10 +11,12 @@ add_ydarov=3 # сколько ударов идет после "0" до смен
 for_test() {
 box_num="3"
 c120="1210850"
+current_fill="9600"
 max_fill="23040"
 per_stroke="96"
-current_fill="9600"
-cycle_box_shot="7.90"
+
+cycle_box_shot="7.75"
+time_input="08:52:57"
 }
 
 #for_test
@@ -204,6 +206,10 @@ fi
 c_A=$(echo "$chiclo" | awk -F"." '{print $1}')
 c_V=$(echo "$chiclo" | awk -F"." '{print $2}')
 c_V=$(echo "scale=3; $c_V*0.6" | bc | awk -F"." '{print $1}')
+
+if [[ "${#c_V}"  -le 1 ]];then
+c_V="0${c_V}"
+fi
 tsikl="${c_A}:${c_V}"
 #test_cikkkl=$(to_hms $chiclo)
 echo;
@@ -232,9 +238,9 @@ echo "         c120:  $c120"
 echo " current_c120:  $current_c120"
 echo "first_end_sec:  $first_end_sec ($(to_hms $first_end_sec))"
 echo "      end_sec:  $end_sec ($(to_hms $end_sec))"
-echo "    tsikl_sec:  $tsikl_sec"
-echo "      end_sec:  $end_sec"
-echo "  current_end:  $current_end"
+echo "    tsikl_sec:  $tsikl_sec ($(to_hms $tsikl_sec))"
+echo "      end_sec:  $end_sec  ($(to_hms $end_sec))"
+echo "  current_end:  $current_end  ($(to_hms $current_end))"
 
 
 echo ${GREEN}
@@ -261,7 +267,7 @@ tsikl_sec=$((10#${tsikl%%:*} * 60 + 10#${tsikl##*:}))
 end_sec=$((10#${time_input%%:*} * 3600 + 10#${time_input##*:} * 60))
 
 
-
+echo "end_sec: $end_sec"
 
 hhh="$(echo $time_input | awk -F":" '{print $1}')"
 mmm="$(echo $time_input | awk -F":" '{print $2}')"
@@ -270,8 +276,9 @@ sss="$(echo $time_input | awk -F":" '{print $3}')"
 #end_sec=$(($hhh * 3600 + $mmm * 60 + $sss))
 
 time_now_sec=$(echo "scale=3; $hhh * 3600 + $mmm * 60 + $sss" | bc)
-end_sec=$(echo "scale=3; $hhh * 3600 + $mmm * 60 + $sss + $add_ydarov * $cycle_time" | bc)
-end_sec="$(echo $end_sec | awk -F".|," '{print $1}')"
+end_sec=$(echo "scale=3; $hhh * 3600 + $mmm * 60 + $sss + $add_ydarov * $cycle_time" | bc | awk -F"[.|,]" '{print $1}')
+
+echo "end_sec: $end_sec"
 
 
 # ─────────────── Определение режима ───────────────
@@ -322,12 +329,16 @@ current_c120=$(( c120_end - (box_num - 1) * (max_fill / per_stroke) ))
 
 
 info
-echo "__________________________________________"
+echo "_________________________________"
+
+echo "       - $(to_hms $((current_end - tsikl_sec)) )"
+
+
 while [ $current_end -le $current_shift_end ]; do
 
 #time_now=$(date +%H:%M)
 
-if [ $current_end -gt "$time_now_sec" ];then
+if [[ "$current_end" -gt "$time_now_sec" ]];then
 
 echo -n ${GREEN}
 fi
@@ -342,7 +353,7 @@ done
 
 # ─────────────── Первый ящик следующей смены ───────────────
 first_box_next_end=$((current_end))
-echo "__________________________________________"
+echo "_________________________________"
 echo "${RED}Box  1 - $(to_hms $first_box_next_end) | C120: $current_c120${NC}"
 
 
